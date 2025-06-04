@@ -1,0 +1,18 @@
+concept_id	concept_name	domain_id	vocabulary_id	concept_class_id	standard_concept	concept_code	valid_start_date	valid_end_date	invalid_reason
+0	0	0	0	0	S	0	1970-01-01	2099-12-31	
+1	x depricated1	0	0	0		xdep1	1970-01-01	2015-12-31	
+2	x depricated2	0	0	0		xdep2	2016-01-01	2016-12-31	
+3	x standard	0	0	0	S	xstandard	2017-01-01	2099-12-31	
+4	unmappable	0	0	0		unmappable	2017-01-01	2017-12-31	
+5	homonym	0	0	0		homonym_non_standard	2017-01-01	2017-12-31	
+6	homonym	0	0	0	S	homonym_standard	2017-01-01	2017-12-31	
+7	History of halitosis	0	0	0		HO-Hali	2017-01-01	2017-12-31	
+8	History of	0	0	0	S	HO	2017-01-01	2017-12-31	
+9	Halitosis	0	0	0	S	Hali	2017-01-01	2017-12-31	
+10	one_to_two_map	0	0	0		1to2	2017-01-01	2017-12-31	
+11	1/2	0	0	0	S	1/2	2017-01-01	2099-12-31	
+12	2/2	0	0	0	S	2/2	2017-01-01	2099-12-31	
+13	dep_concept_two_values	0	0	0		2/2	2017-01-01	2009-12-31	
+14	superstandard	0	0	0	S	1/2	2017-01-01	2099-12-31	
+15	val1	0	0	0	S	v1	2017-01-01	2099-12-31	
+16	val2	0	0	0	S	v2	2017-01-01	2099-12-31	

@@ -1,0 +1,1 @@
+from .mapping_updater.update_usagi import update_usagi_file
