@@ -1,4 +1,0 @@
-sourceCode,sourceName,sourceFrequency,sourceAutoAssignedConceptIds,matchScore,mappingStatus,equivalence,statusSetBy,statusSetOn,conceptId,conceptName,domainId,mappingType,comment,createdBy,createdOn,assignedReviewer
-DOXAZOSIN 2MG ORAL TABLETS,DOXAZOSIN 2MG TABLETS,1,,0.54,APPROVED,EQUAL,Anne,1737553681172,41314865,Doxazosin 2 MG Oral Tablet [Doxazosin Al],Drug,MAPS_TO,,Anne,1737553680372,
-DOXAZOSIN 2MG ORAL TABLETS,DOXAZOSIN 2MG TABLETS,1,,0.54,APPROVED,EQUAL,Anne,1737553681172,12345,x,Type Concept,MAPS_TO_TYPE,,Anne,1737553680372,
-LATANOPROST 50MICROGRAM/ML EYE DROPS,LATANOPROST  50MICROGRAM/ML EYE DROPS,3,,0.38,APPROVED,EQUAL,Anne,1737543012153,19080125,latanoprost 0.05 MG/ML Ophthalmic Solution,Drug,MAPS_TO,,Anne,1737543009306,
