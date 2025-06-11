@@ -26,6 +26,6 @@ def log_remapped_concepts(new_mappings: dict[int, NewMap | None]) -> None:
         logger.info(f"{n_mapped}/{len(new_mappings)} could be remapped ✨✨")
     else:
         logger.info("No standard concepts could be found ☹️")
-    unmapped = [c_id for c_id, v in new_mappings.items() if v is None]
+    unmapped = sorted([c_id for c_id, v in new_mappings.items() if v is None])
     if unmapped:
         logger.info(f"The following concept_ids could not be remapped: {unmapped}")
