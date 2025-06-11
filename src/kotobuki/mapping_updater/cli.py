@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import logging
-import sys
 from pathlib import Path
 
 import click
@@ -86,7 +85,6 @@ def _update_usagi_cli(
 
 
 def main():
-    logging.basicConfig(stream=sys.stdout, format="%(message)s", level=logging.DEBUG)
     _update_usagi_cli()
 
 

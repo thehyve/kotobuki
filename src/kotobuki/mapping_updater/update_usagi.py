@@ -1,4 +1,5 @@
 import logging
+import sys
 from pathlib import Path
 
 from omop_cdm.constants import VOCAB_SCHEMA
@@ -51,6 +52,8 @@ def update_usagi_file(
         file is written).
     :return: None
     """
+    logging.basicConfig(stream=sys.stdout, format="%(message)s", level=logging.INFO)
+
     if inspect_only and overwrite:
         raise ValueError("inspect_only and overwrite cannot both be True.")
 
