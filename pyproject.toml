@@ -36,7 +36,7 @@ dev = [
     "pre-commit>=4.2.0",
 ]
 test = [
-    "psycopg2>=2.9.10",
+    "psycopg2-binary>=2.9.10",
     "pytest>=8.4.0",
     "pytest-cov>=6.1.1",
     "testcontainers>=4.10.0",
