@@ -89,6 +89,50 @@ been traversed.
 > Searching for standard concepts via homonyms is less reliable than via the concept
 > relationships, especially for concepts with a short name.
 
+### Diagram
+
+Recursive search algorithm as a flowchart.
+Homonym search (light blue) is an optional step.
+
+```mermaid
+---
+title: Recursive Search Algorithm
+config:
+  theme: 'neutral'
+  fontFamily: "\"arial\", sans-serif"
+  flowchart: 
+    curve: linear
+---
+flowchart TB
+    classDef optional fill:#BBDEFB
+    classDef regular fill:#e5efc3
+    classDef subgraph_style fill:#f6faeb
+    
+    fetch[Fetch relationships<br>for target concept_id]:::regular
+    maps_to{Any 'Maps to' relationship?}:::regular
+    replaced_by{Any 'Concept replaced by'<br>relationship?}:::regular
+    same_equal{Any 'same as' or 'possibly<br>equal' relationship?}:::regular
+    homonym{Any other concepts<br>with the same name?}:::optional
+    
+    result:::subgraph_style
+    subgraph result[Result]
+        no_cigar[At least we tried.<br><br>Keep the original mapping.]:::regular
+        success[Success!✨<br><br>Replace old mapping with<br>all 'Maps to' and 'Maps to<br>value' relationships.]:::regular
+    end
+    
+    fetch ==> maps_to
+    maps_to == NO ==> replaced_by
+    replaced_by == NO ==> same_equal
+    same_equal == NO ==> homonym
+    homonym == NO ==> no_cigar
+
+    replaced_by == YES ==> fetch
+    same_equal == YES ==> fetch
+    homonym == YES ==> fetch
+    maps_to == YES ==> success
+    
+```
+
 ## Output
 By default, the updated Usagi mappings will be written to a new file. If you provide the
 `overwrite` option, the original file will be updated instead. Any recognized fields
