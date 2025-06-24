@@ -85,6 +85,9 @@ All available homonyms will be parsed for concept relationships (just like the o
 non-standard concept) until a standard concept is found or all relationship paths have
 been traversed.
 
+To include homonyms, add the `--allow-homonyms`/`-h` flag (CLI), or provide
+`allow_homonyms=True` (Python).
+
 > ⚠️ **WARNING:**
 > Searching for standard concepts via homonyms is less reliable than via the concept
 > relationships, especially for concepts with a short name.
@@ -139,10 +142,16 @@ By default, the updated Usagi mappings will be written to a new file. If you pro
 related to the updated concept will be changed as well (e.g. concept domain, class, as
 present in the Usagi review file.)
 
+Alternatively, you can only log findings to the console without writing anything. To do so,
+add the `--inspect-only`/`-s` flag (CLI), or provide `inspect_only=True` (Python).
+
 ### Mapping paths
 If preferred, an additional file can be written which contains the mapping paths for
 all updated mappings. In there you can see exactly which steps were taken to go from the
 original non-standard concept to a standard alternative.
+
+To write the mapping paths, add the `--write-map-paths`/`-m` flag (CLI), or provide
+`write_map_paths=True` (Python).
 
 > ℹ️ **NOTE:**
 > Mappings paths currently don't include `Maps to value` relationships.
