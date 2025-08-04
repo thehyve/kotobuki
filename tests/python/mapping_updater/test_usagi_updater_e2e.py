@@ -13,8 +13,7 @@ pytestmark = pytest.mark.usefixtures("create_vocab_tables")
 
 _DIR = Path(__file__)
 TEST_DATA_DIR = _DIR.parent / "test_data"
-USAGI_DIR = TEST_DATA_DIR / "usagi_files"
-USAGI_STCM_FILE = USAGI_DIR / "stcm" / "usagi_test_stcm.csv"
+USAGI_STCM_FILE = TEST_DATA_DIR / "stcm" / "usagi_test_stcm.csv"
 
 
 def write_tmp_usagi_file(tmp_path: Path, original_usagi_file: Path) -> Path:
