@@ -1,5 +1,6 @@
 import logging
 import sys
+from importlib.metadata import version
 from pathlib import Path
 
 from omop_cdm.constants import VOCAB_SCHEMA
@@ -57,6 +58,7 @@ def update_usagi_file(
     :return: None
     """
     logging.basicConfig(stream=sys.stdout, format="%(message)s", level=logging.INFO)
+    logger.info(f"Running kotobuki v{version('kotobuki')}")
 
     if inspect_only and overwrite:
         raise ValueError("inspect_only and overwrite cannot both be True.")
