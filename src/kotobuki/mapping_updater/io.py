@@ -62,20 +62,28 @@ def _set_field_values(
     return row
 
 
-def update_row(row: dict[str, str], target_concept: Concept) -> dict[str, str]:
+def update_row(
+    row: dict[str, str],
+    target_concept: Concept,
+    is_new: bool,
+) -> dict[str, str]:
     """Update all Usagi file fields where applicable."""
     # The list below is a superset of the fields in Usagi
     # save/review/STCM files. As these are sometimes manually
     # added/modified, the code below simply checks for all possible
     # fields whether they are present in the original Usagi file and
     # updates values where needed.
-    row = _set_field_values(row, CONCEPT_ID_COLUMNS, f"{target_concept.concept_id}")
-    row = _set_field_values(row, ["mappingStatus"], "UNCHECKED")
-    row = _set_field_values(row, ["equivalence"], "UNREVIEWED")
-    row = _set_field_values(row, ["statusSetBy", "createdBy"], "UpdateBot")
+
+    # These fields should only be set when the old mapping is replaced
+    if is_new:
+        row = _set_field_values(row, CONCEPT_ID_COLUMNS, f"{target_concept.concept_id}")
+        row = _set_field_values(row, ["mappingStatus"], "UNCHECKED")
+        row = _set_field_values(row, ["equivalence"], "UNREVIEWED")
+        row = _set_field_values(row, ["statusSetBy", "createdBy"], "UpdateBot")
+        row = _set_field_values(row, ["statusSetOn", "createdOn"], f"{int(time())}")
+
     fields = ["conceptName", "targetConceptName"]
     row = _set_field_values(row, fields, f"{target_concept.concept_name}")
-    row = _set_field_values(row, ["statusSetOn", "createdOn"], f"{int(time())}")
     row = _set_field_values(row, ["domainId", "targetDomainId"], f"{target_concept.domain_id}")
     fields = ["targetVocabularyId", "target_vocabulary_id"]
     row = _set_field_values(row, fields, f"{target_concept.vocabulary_id}")
@@ -93,7 +101,9 @@ def update_row(row: dict[str, str], target_concept: Concept) -> dict[str, str]:
 
 
 def get_new_lines(
-    line: dict[str, str], new_mappings: dict[int, NewMap | None]
+    line: dict[str, str],
+    new_mappings: dict[int, NewMap | None],
+    concept_lookup: dict[int, Concept] | None = None,
 ) -> list[dict[str, str]]:
     """Return updated Usagi file line(s)."""
     target_concept_id_col = next(col for col in CONCEPT_ID_COLUMNS if col in line)
@@ -102,27 +112,34 @@ def get_new_lines(
     new_line = line.copy()
     new_lines = []
 
-    # no updated mapping could be set
-    if new_map is None:
-        # Mark concept as non-standard
-        if "targetStandardConcept" in new_line:
-            new_line["targetStandardConcept"] = ""
-        new_lines.append(new_line)
+    # Target concept was non-standard; new mappings available
+    if new_map is not None:
+        for concept in new_map.concepts:
+            new_lines.append(update_row(new_line.copy(), concept, is_new=True))
+
+        # If there are also MAPS_TO_VALUE relationships, add more lines
+        if new_map.value_as_concept:
+            for value_concept in new_map.value_as_concept:
+                value_map_line = line.copy()
+                value_map_line["mappingType"] = "MAPS_TO_VALUE"
+                new_lines.append(update_row(value_map_line, value_concept, is_new=True))
         return new_lines
 
-    for concept in new_map.concepts:
-        new_lines.append(update_row(new_line.copy(), concept))
-
-    # If there are also MAPS_TO_VALUE relationships, add more lines
-    if new_map.value_as_concept:
-        for value_concept in new_map.value_as_concept:
-            value_map_line = line.copy()
-            value_map_line["mappingType"] = "MAPS_TO_VALUE"
-            new_lines.append(update_row(value_map_line, value_concept))
-    return new_lines
+    # No new mappings; update concept properties if concept_lookup is provided.
+    # It can also be that the target_concept_id doesn't exist in the user's
+    # database, therefore check if concept exists in concept_lookup
+    if concept_lookup is None or target_concept_id not in concept_lookup:
+        return [new_line]
+    up_to_date_concept = concept_lookup[target_concept_id]
+    return [update_row(new_line.copy(), up_to_date_concept, is_new=False)]
 
 
-def write_usagi_file(usagi_file: Path, new_mappings: dict[int, NewMap | None], overwrite: bool):
+def write_usagi_file(
+    usagi_file: Path,
+    new_mappings: dict[int, NewMap | None],
+    overwrite: bool,
+    concept_lookup: dict[int, Concept] | None = None,
+):
     out_dir = usagi_file.parent
     out_file = out_dir / f"{usagi_file.stem}_{strftime('%Y-%m-%dT%H%M%S')}.csv"
 
@@ -136,7 +153,7 @@ def write_usagi_file(usagi_file: Path, new_mappings: dict[int, NewMap | None], o
         writer = csv.DictWriter(f_out, delimiter=",", fieldnames=out_header)
         writer.writeheader()
         for line in reader:
-            new_lines = get_new_lines(line, new_mappings)
+            new_lines = get_new_lines(line, new_mappings, concept_lookup)
             for new_line in new_lines:
                 writer.writerow(new_line)
     if overwrite:

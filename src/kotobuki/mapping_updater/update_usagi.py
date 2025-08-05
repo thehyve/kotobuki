@@ -32,6 +32,7 @@ def update_usagi_file(
     write_map_paths: bool = False,
     inspect_only: bool = False,
     overwrite: bool = False,
+    update_all: bool = False,
 ):
     """
     Parse an Usagi exported file to update non-standard concepts.
@@ -50,6 +51,9 @@ def update_usagi_file(
         only show results in the console.
     :param overwrite: Overwrite the existing Usagi file (otherwise a new
         file is written).
+    :param update_all: Also update fields of concepts that don't get a
+        new mapping, but do have outdated properties (e.g. changed
+        domain_id).
     :return: None
     """
     logging.basicConfig(stream=sys.stdout, format="%(message)s", level=logging.INFO)
@@ -72,8 +76,10 @@ def update_usagi_file(
         non_standard = {c for c in concepts if c.standard_concept != "S"}
         if not non_standard:
             logger.info("All target concepts are already standard 😍")
-            return
-        logger.info(f"{len(non_standard)} target concepts are non-standard")
+            if not update_all:
+                return
+        else:
+            logger.info(f"{len(non_standard)} target concepts are non-standard")
 
         new_mappings: dict[int, NewMap | None] = {c.concept_id: None for c in non_standard}
 
@@ -90,5 +96,10 @@ def update_usagi_file(
 
         if inspect_only:
             return
+
         logger.info("Writing updated Usagi file")
-        write_usagi_file(usagi_file, new_mappings, overwrite)
+        if update_all:
+            concept_lookup = {c.concept_id: c for c in concepts}
+            write_usagi_file(usagi_file, new_mappings, overwrite, concept_lookup)
+        else:
+            write_usagi_file(usagi_file, new_mappings, overwrite)

@@ -14,6 +14,7 @@ pytestmark = pytest.mark.usefixtures("create_vocab_tables")
 _DIR = Path(__file__)
 TEST_DATA_DIR = _DIR.parent / "test_data"
 USAGI_STCM_FILE = TEST_DATA_DIR / "stcm" / "usagi_test_stcm.csv"
+MAP_TO_0_USAGI_FILE = TEST_DATA_DIR / "usagi_files" / "mapping_to_0.csv"
 
 
 def write_tmp_usagi_file(tmp_path: Path, original_usagi_file: Path) -> Path:
@@ -103,4 +104,37 @@ def test_homonyms(tmp_path: Path, pg_db_engine: Engine):
         ("X14", "14"),
         ("X15", "15"),
         ("X16", "16"),
+    ]
+
+
+def test_domain_id_only_updated_when_mapped_to_non_zero(tmp_path: Path, pg_db_engine: Engine):
+    tmp_usagi_save_file = write_tmp_usagi_file(tmp_path, MAP_TO_0_USAGI_FILE)
+
+    def get_mappings_from_file(usagi_file: Path) -> list[tuple[str, str]]:
+        with usagi_file.open("r", encoding="utf8") as f:
+            reader = csv.DictReader(f)
+            return [(line["domainId"], line["conceptId"]) for line in reader]
+
+    expected_original = [
+        ("", "0"),
+        ("BLA", "0"),
+        ("", "0"),
+        ("Observation", "17"),
+        ("Drug", "18"),
+    ]
+    assert get_mappings_from_file(MAP_TO_0_USAGI_FILE) == expected_original
+
+    # Without update_all, concept properties of existing mappings are not updated
+    update_usagi_file(pg_db_engine, "vocab", tmp_usagi_save_file, overwrite=True, update_all=False)
+    assert get_mappings_from_file(tmp_usagi_save_file) == expected_original
+
+    # Codes that map to 0 will not be updated, but codes of which the
+    # domain_id is outdated, will get an update
+    update_usagi_file(pg_db_engine, "vocab", tmp_usagi_save_file, overwrite=True, update_all=True)
+    assert get_mappings_from_file(tmp_usagi_save_file) == [
+        ("", "0"),
+        ("BLA", "0"),
+        ("", "0"),
+        ("Condition", "17"),
+        ("Condition", "18"),
     ]
