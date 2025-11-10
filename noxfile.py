@@ -1,5 +1,8 @@
 import nox  # type: ignore
 
+PYPROJECT = nox.project.load_toml("pyproject.toml")
+PYTHON_VERSIONS = nox.project.python_versions(PYPROJECT)
+
 nox.options.default_venv_backend = "uv"
 
 nox.options.sessions = [
@@ -7,14 +10,8 @@ nox.options.sessions = [
     "lint",
 ]
 
-python = [
-    "3.11",
-    "3.12",
-    "3.13",
-]
 
-
-@nox.session(python=python)
+@nox.session(python=PYTHON_VERSIONS)
 def tests(s: nox.Session):
     s.install(".")
     s.run("uv", "pip", "install", "--group", "test")
