@@ -9,17 +9,29 @@ outdated in a new release of the OHDSI vocabularies.
 
 ## Installation
 
-kotobuki requires Python 3.11+ and is available on PyPI:
-
-```shell
-pip install kotobuki
-```
+kotobuki requires Python 3.11+ and is available on [PyPI](https://pypi.org/project/kotobuki/).
 
 Depending on the type of database you have, you'll also need to install the required python
 adapter library.
 E.g. for postgresql, you can use [psycopg2](https://pypi.org/project/psycopg2/).
 
 See SQLAlchemy docs for a list of supported [dialects](https://docs.sqlalchemy.org/en/20/dialects/).
+
+As kotobuki is intended to be used as a standalone tool, the recommended method of installation is
+in an isolated (temporary) environment.
+
+E.g. if using [uv](https://docs.astral.sh/uv/) with a postgresql database:
+
+```shell
+uvx --with psycopg2 --from kotobuki update-usagi-file --help
+```
+
+Or within a Jupyter notebook:
+
+```shell
+uv run --with jupyter,psycopg2,kotobuki jupyter lab
+```
+
 
 ## Usage
 See [User documentation](https://github.com/thehyve/kotobuki/blob/main/docs/kotobuki.md)
