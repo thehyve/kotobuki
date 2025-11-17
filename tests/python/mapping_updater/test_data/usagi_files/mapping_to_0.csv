@@ -1,0 +1,6 @@
+sourceCode,sourceName,sourceFrequency,sourceAutoAssignedConceptIds,matchScore,mappingStatus,equivalence,statusSetBy,statusSetOn,conceptId,conceptName,domainId,mappingType,comment,createdBy,createdOn,assignedReviewer
+ABC,PARACETAMOL + FENILEFRINA + CLORFENAMINA,690,,0.36,FLAGGED,EQUAL,Connacht,1754320501940,0,Unmapped,,MAPS_TO,,,0,
+DEF,CITRATO SODICO*,53,,0.32,APPROVED,UNMATCHED,Connacht,1754322073842,0,Unmapped,BLA,MAPS_TO,,,0,
+GHI,MICONAZOL + INOSINA + GUANOSINA + VITAMINA F,6324,,0.32,UNCHECKED,UNREVIEWED,,0,0,Unmapped,,MAPS_TO,,,0,
+JKL,Ingredient X,3,,0.52,UNCHECKED,UNREVIEWED,,0,17,qwerty,Observation,MAPS_TO,,,0,
+MNO,Ingredient Y,3,,0.52,UNCHECKED,UNREVIEWED,,0,18,azerty,Drug,MAPS_TO,,,0,

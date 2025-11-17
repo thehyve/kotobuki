@@ -60,6 +60,14 @@ logger = logging.getLogger(__name__)
     default=False,
     help="Overwrite the existing Usagi file (otherwise a new file is written).",
 )
+@click.option(
+    "-a",
+    "--update-all",
+    is_flag=True,
+    default=False,
+    help="Also update fields of concepts that don't get a new mapping, but "
+    "do have outdated properties (e.g. changed domain_id)",
+)
 def _update_usagi_cli(
     url: str,
     schema: str,
@@ -68,6 +76,7 @@ def _update_usagi_cli(
     write_map_paths: bool,
     inspect_only: bool,
     overwrite: bool,
+    update_all: bool,
 ) -> None:
     """
     Parse an Usagi saved/exported file to update non-standard concepts.
@@ -81,6 +90,7 @@ def _update_usagi_cli(
         write_map_paths,
         inspect_only,
         overwrite,
+        update_all,
     )
 
 
