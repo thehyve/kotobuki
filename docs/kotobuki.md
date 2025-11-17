@@ -43,6 +43,7 @@ update_usagi_file(
     write_map_paths=False,
     inspect_only=False,
     overwrite=False,
+    update_all=False,
 )
 ```
 
@@ -141,6 +142,9 @@ By default, the updated Usagi mappings will be written to a new file. If you pro
 `overwrite` option, the original file will be updated instead. Any recognized fields
 related to the updated concept will be changed as well (e.g. concept domain, class, as
 present in the Usagi review file.)
+
+If `update_all` is used, mappings that are not being replaced will still get updated
+properties if applicable (e.g. target concept was already standard, but domain has changed.)
 
 Alternatively, you can only log findings to the console without writing anything. To do so,
 add the `--inspect-only`/`-s` flag (CLI), or provide `inspect_only=True` (Python).
