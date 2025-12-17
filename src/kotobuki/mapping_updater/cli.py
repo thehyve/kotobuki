@@ -40,6 +40,14 @@ logger = logging.getLogger(__name__)
     "strongly recommended to index the concept_name column when using this.",
 )
 @click.option(
+    "--case-insensitive-homonyms",
+    is_flag=True,
+    default=False,
+    help="When searching for homonyms, do so in a case-insensitive way. "
+    "It is strongly recommended to create a functional index on the "
+    "concept table for this.",
+)
+@click.option(
     "-m",
     "--write-map-paths",
     is_flag=True,
@@ -73,6 +81,7 @@ def _update_usagi_cli(
     schema: str,
     usagi_file: Path,
     allow_homonyms: bool,
+    case_insensitive_homonyms: bool,
     write_map_paths: bool,
     inspect_only: bool,
     overwrite: bool,
@@ -87,6 +96,7 @@ def _update_usagi_cli(
         schema,
         usagi_file,
         allow_homonyms,
+        case_insensitive_homonyms,
         write_map_paths,
         inspect_only,
         overwrite,

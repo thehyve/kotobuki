@@ -1,7 +1,7 @@
 from collections.abc import Sequence
 
 from omop_cdm.regular.cdm54 import Concept, ConceptRelationship
-from sqlalchemy import and_, select
+from sqlalchemy import and_, func, select
 from sqlalchemy.orm import Session
 
 from .relationship import (
@@ -65,8 +65,14 @@ def find_standard_concepts(
     return None
 
 
-def find_all_homonyms(concept_name: str, session: Session) -> Sequence[Concept]:
+def find_all_homonyms(
+    concept_name: str, case_insensitive: bool, session: Session
+) -> Sequence[Concept]:
     """Get Concept ORM objects that match the concept_name."""
+    if case_insensitive:
+        return session.scalars(
+            select(Concept).where(func.lower(Concept.concept_name) == concept_name.lower())
+        ).all()
     return session.scalars(select(Concept).where(Concept.concept_name == concept_name)).all()
 
 
@@ -75,7 +81,9 @@ def find_suitable_homonym(
 ) -> NewMap | None:
     """Return first homonym concept that maps to a standard concept."""
     start_path = [MapLink(concept)]
-    for h in homonyms:
+    # Exclude the concept for which we are trying to find a mapping
+    other_homonyms = [h for h in homonyms if h.concept_id != concept.concept_id]
+    for h in other_homonyms:
         path = start_path.copy()
         path.append(MapLink(h, Relationship.HOMONYM))
         new_map = find_standard_concepts(h.concept_id, session, path)
@@ -84,11 +92,16 @@ def find_suitable_homonym(
     return None
 
 
-def find_new_mapping(concept: Concept, search_homonyms: bool, session: Session) -> NewMap | None:
+def find_new_mapping(
+    concept: Concept,
+    search_homonyms: bool,
+    case_insensitive_homonyms: bool,
+    session: Session,
+) -> NewMap | None:
     # Try to find standard concepts via concept relationships
     new_map = find_standard_concepts(concept.concept_id, session, [MapLink(concept)])
     # Alternatively via concepts with an identical name
     if search_homonyms and new_map is None:
-        homonyms = find_all_homonyms(concept.concept_name, session)
+        homonyms = find_all_homonyms(concept.concept_name, case_insensitive_homonyms, session)
         new_map = find_suitable_homonym(homonyms, session, concept)
     return new_map
