@@ -44,8 +44,6 @@ ignore = [
 "tests/*" = [
     # Tests may access private members
     "SLF001",
-    # imports used in mark.usefixtures are falsely flagged as unused
-    "F401",
 ]
 
 [lint.isort]

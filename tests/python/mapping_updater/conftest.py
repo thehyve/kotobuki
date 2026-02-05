@@ -1,12 +1,9 @@
-from collections.abc import Generator
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Any
 
 import pytest
 from omop_cdm.constants import VOCAB_SCHEMA
 from sqlalchemy import Connection, Engine, create_engine, text
-from sqlalchemy.engine.base import OptionEngine
 from sqlalchemy.sql.ddl import CreateSchema, DropSchema
 from testcontainers.postgres import PostgresContainer
 
