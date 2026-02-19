@@ -1,9 +1,6 @@
 import pytest
-from omop_cdm.regular.cdm54 import Concept
 from sqlalchemy import Engine
 
-from kotobuki.mapping_updater.db import find_new_mapping
-from kotobuki.mapping_updater.relationship import MapLink, Relationship
 from tests.python.mapping_updater.test_usagi_mappings import get_new_map
 
 pytestmark = pytest.mark.usefixtures("create_vocab_tables")
