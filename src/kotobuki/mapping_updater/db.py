@@ -66,14 +66,19 @@ def find_standard_concepts(
 
 
 def find_all_homonyms(
-    concept_name: str, case_insensitive: bool, session: Session
+    concept: Concept, case_insensitive: bool, session: Session
 ) -> Sequence[Concept]:
     """Get Concept ORM objects that match the concept_name."""
     if case_insensitive:
-        return session.scalars(
-            select(Concept).where(func.lower(Concept.concept_name) == concept_name.lower())
+        homonyms = session.scalars(
+            select(Concept).where(func.lower(Concept.concept_name) == concept.concept_name.lower())
         ).all()
-    return session.scalars(select(Concept).where(Concept.concept_name == concept_name)).all()
+    else:
+        homonyms = session.scalars(
+            select(Concept).where(Concept.concept_name == concept.concept_name)
+        ).all()
+    # Exclude the concept for which we are trying to find a mapping
+    return [h for h in homonyms if h.concept_id != concept.concept_id]
 
 
 def find_suitable_homonym(
@@ -81,9 +86,7 @@ def find_suitable_homonym(
 ) -> NewMap | None:
     """Return first homonym concept that maps to a standard concept."""
     start_path = [MapLink(concept)]
-    # Exclude the concept for which we are trying to find a mapping
-    other_homonyms = [h for h in homonyms if h.concept_id != concept.concept_id]
-    for h in other_homonyms:
+    for h in homonyms:
         path = start_path.copy()
         path.append(MapLink(h, Relationship.HOMONYM))
         new_map = find_standard_concepts(h.concept_id, session, path)
@@ -102,6 +105,6 @@ def find_new_mapping(
     new_map = find_standard_concepts(concept.concept_id, session, [MapLink(concept)])
     # Alternatively via concepts with an identical name
     if search_homonyms and new_map is None:
-        homonyms = find_all_homonyms(concept.concept_name, case_insensitive_homonyms, session)
+        homonyms = find_all_homonyms(concept, case_insensitive_homonyms, session)
         new_map = find_suitable_homonym(homonyms, session, concept)
     return new_map

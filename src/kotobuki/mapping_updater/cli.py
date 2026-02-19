@@ -40,7 +40,8 @@ logger = logging.getLogger(__name__)
     "strongly recommended to index the concept_name column when using this.",
 )
 @click.option(
-    "--case-insensitive-homonyms",
+    "--i",
+    "--ignore-case",
     is_flag=True,
     default=False,
     help="When searching for homonyms, do so in a case-insensitive way. "
