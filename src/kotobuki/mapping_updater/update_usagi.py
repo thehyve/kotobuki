@@ -30,7 +30,7 @@ def update_usagi_file(
     vocab_schema: str,
     usagi_file: Path,
     allow_homonyms: bool = False,
-    case_insensitive_homonyms: bool = False,
+    ignore_case: bool = False,
     write_map_paths: bool = False,
     inspect_only: bool = False,
     overwrite: bool = False,
@@ -88,7 +88,7 @@ def update_usagi_file(
 
         logger.info("Querying database for standard concepts...")
         for concept in non_standard:
-            new_map = find_new_mapping(concept, allow_homonyms, case_insensitive_homonyms, session)
+            new_map = find_new_mapping(concept, allow_homonyms, ignore_case, session)
             new_mappings[concept.concept_id] = new_map
         log_remapped_concepts(new_mappings)
 

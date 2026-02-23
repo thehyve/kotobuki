@@ -17,14 +17,14 @@ def get_new_map(
     concept_id: int,
     engine: Engine,
     homonyms: bool = False,
-    case_insensitive_homonyms: bool = False,
+    ignore_case: bool = False,
 ) -> NewMap | None:
     with Session(engine, expire_on_commit=False) as session, session.begin():
         concept = get_concept_by_id(session, concept_id=concept_id)
         return find_new_mapping(
             concept=concept,
             search_homonyms=homonyms,
-            case_insensitive_homonyms=case_insensitive_homonyms,
+            ignore_case=ignore_case,
             session=session,
         )
 

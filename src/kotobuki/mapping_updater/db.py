@@ -71,14 +71,24 @@ def find_all_homonyms(
     """Get Concept ORM objects that match the concept_name."""
     if case_insensitive:
         homonyms = session.scalars(
-            select(Concept).where(func.lower(Concept.concept_name) == concept.concept_name.lower())
+            select(Concept).where(
+                and_(
+                    func.lower(Concept.concept_name) == concept.concept_name.lower(),
+                    Concept.concept_id != concept.concept_id,
+                )
+            )
         ).all()
     else:
         homonyms = session.scalars(
-            select(Concept).where(Concept.concept_name == concept.concept_name)
+            select(Concept).where(
+                and_(
+                    Concept.concept_name == concept.concept_name,
+                    Concept.concept_id != concept.concept_id,
+                )
+            )
         ).all()
     # Exclude the concept for which we are trying to find a mapping
-    return [h for h in homonyms if h.concept_id != concept.concept_id]
+    return homonyms
 
 
 def find_suitable_homonym(
@@ -98,13 +108,13 @@ def find_suitable_homonym(
 def find_new_mapping(
     concept: Concept,
     search_homonyms: bool,
-    case_insensitive_homonyms: bool,
+    ignore_case: bool,
     session: Session,
 ) -> NewMap | None:
     # Try to find standard concepts via concept relationships
     new_map = find_standard_concepts(concept.concept_id, session, [MapLink(concept)])
     # Alternatively via concepts with an identical name
     if search_homonyms and new_map is None:
-        homonyms = find_all_homonyms(concept, case_insensitive_homonyms, session)
+        homonyms = find_all_homonyms(concept, ignore_case, session)
         new_map = find_suitable_homonym(homonyms, session, concept)
     return new_map

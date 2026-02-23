@@ -15,7 +15,7 @@ def test_find_standard_concept_via_case_insensitive_homonym(pg_db_engine: Engine
         concept_id=19,
         engine=pg_db_engine,
         homonyms=True,
-        case_insensitive_homonyms=True,
+        ignore_case=True,
     )
     assert len(result.concepts) == 1
     assert result.concepts[0].concept_id == 20
@@ -24,12 +24,12 @@ def test_find_standard_concept_via_case_insensitive_homonym(pg_db_engine: Engine
 
 def test_NOT_find_standard_concept_via_case_insensitive_homonym(pg_db_engine: Engine):
     """
-    Test if "qzerty" is not picked up from "QzErTy" when case_insensitive_homonyms is False.
+    Test if "qzerty" is not picked up from "QzErTy" when ignore_case is False.
     """
     result = get_new_map(
         concept_id=19,
         engine=pg_db_engine,
         homonyms=True,
-        case_insensitive_homonyms=False,
+        ignore_case=False,
     )
     assert result is None
