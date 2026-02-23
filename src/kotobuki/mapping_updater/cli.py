@@ -40,7 +40,7 @@ logger = logging.getLogger(__name__)
     "strongly recommended to index the concept_name column when using this.",
 )
 @click.option(
-    "--i",
+    "-i",
     "--ignore-case",
     is_flag=True,
     default=False,
