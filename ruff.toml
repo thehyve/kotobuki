@@ -8,6 +8,8 @@ extend-exclude = [
 select = [
     # pycodestyle
     "E", "W",
+    # pep8-naming
+    "N",
     # Pyflakes
     "F",
     # pyupgrade
