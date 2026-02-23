@@ -22,7 +22,7 @@ def test_find_standard_concept_via_case_insensitive_homonym(pg_db_engine: Engine
     assert not result.value_as_concept
 
 
-def test_NOT_find_standard_concept_via_case_insensitive_homonym(pg_db_engine: Engine):
+def test_ignore_case_false(pg_db_engine: Engine):
     """
     Test if "qzerty" is not picked up from "QzErTy" when ignore_case is False.
     """
