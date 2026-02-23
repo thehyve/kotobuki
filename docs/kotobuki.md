@@ -40,6 +40,7 @@ update_usagi_file(
     vocab_schema="my_cdm",
     usagi_file=usagi_file,
     allow_homonyms=False,
+    ignore_case=False,
     write_map_paths=False,
     inspect_only=False,
     overwrite=False,
@@ -86,8 +87,15 @@ All available homonyms will be parsed for concept relationships (just like the o
 non-standard concept) until a standard concept is found or all relationship paths have
 been traversed.
 
+For some homonym concepts, the case may be different (e.g. diabetes type 2 vs Diabetes
+Type 2). It needs to be specified within the use of kotobuki whether such homonyms
+should be included.
+
 To include homonyms, add the `--allow-homonyms`/`-h` flag (CLI), or provide
 `allow_homonyms=True` (Python).
+
+To search for homonyms regardless of case, add the `--case-insensitive`/`-i`
+flag (CLI), or provide `case_insensitive=True` (Python).
 
 > ⚠️ **WARNING:**
 > Searching for standard concepts via homonyms is less reliable than via the concept
