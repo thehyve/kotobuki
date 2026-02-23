@@ -87,7 +87,6 @@ def find_all_homonyms(
                 )
             )
         ).all()
-    # Exclude the concept for which we are trying to find a mapping
     return homonyms
 
 
