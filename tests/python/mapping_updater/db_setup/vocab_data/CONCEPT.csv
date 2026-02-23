@@ -18,3 +18,5 @@ concept_id	concept_name	domain_id	vocabulary_id	concept_class_id	standard_concep
 16	val2	0	0	0	S	v2	2017-01-01	2099-12-31	
 17	qwerty	Condition	0	0	S	qwerty	2017-01-01	2099-12-31	
 18	azerty	Condition	0	0		azerty	2017-01-01	2099-12-31	
+19	QzErTy	Condition	0	0		QzErTy	2017-01-01	2099-12-31	
+20	qzerty	Condition	0	0	S	qzerty	2017-01-01	2099-12-31	

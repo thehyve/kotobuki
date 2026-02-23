@@ -13,10 +13,20 @@ def get_concept_by_id(session: Session, concept_id: int) -> Concept | None:
     return session.scalars(select(Concept).filter(Concept.concept_id == concept_id)).one_or_none()
 
 
-def get_new_map(concept_id: int, engine: Engine, homonyms: bool = False) -> NewMap | None:
+def get_new_map(
+    concept_id: int,
+    engine: Engine,
+    homonyms: bool = False,
+    ignore_case: bool = False,
+) -> NewMap | None:
     with Session(engine, expire_on_commit=False) as session, session.begin():
         concept = get_concept_by_id(session, concept_id=concept_id)
-        return find_new_mapping(concept=concept, search_homonyms=homonyms, session=session)
+        return find_new_mapping(
+            concept=concept,
+            search_homonyms=homonyms,
+            ignore_case=ignore_case,
+            session=session,
+        )
 
 
 def test_no_map(pg_db_engine: Engine):
