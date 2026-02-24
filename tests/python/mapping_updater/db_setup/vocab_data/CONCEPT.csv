@@ -1,7 +1,7 @@
 concept_id	concept_name	domain_id	vocabulary_id	concept_class_id	standard_concept	concept_code	valid_start_date	valid_end_date	invalid_reason
 0	0	Metadata	0	0		0	1970-01-01	2099-12-31	
-1	x depricated1	0	0	0		xdep1	1970-01-01	2015-12-31	
-2	x depricated2	0	0	0		xdep2	2016-01-01	2016-12-31	
+1	x deprecated1	0	0	0		xdep1	1970-01-01	2015-12-31	
+2	x deprecated2	0	0	0		xdep2	2016-01-01	2016-12-31	
 3	x standard	0	0	0	S	xstandard	2017-01-01	2099-12-31	
 4	unmappable	0	0	0		unmappable	2017-01-01	2017-12-31	
 5	homonym	0	0	0		homonym_non_standard	2017-01-01	2017-12-31	
