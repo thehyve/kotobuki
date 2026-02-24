@@ -72,7 +72,7 @@ class NewMap:
         # Remove keys that point to empty lists
         map_properties = {k: v for k, v in map_properties.items() if v}
 
-        original_concept = self.map_path[0].concept
+        source_concept = self.map_path[0].concept
         return {
-            f"{original_concept.concept_id} {original_concept.concept_name}": map_properties,
+            f"{source_concept.concept_id} {source_concept.concept_name}": map_properties,
         }
