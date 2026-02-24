@@ -29,13 +29,19 @@ VAL_TO_RELATIONSHIP = {e.value: e for e in Relationship}
 
 @dataclass
 class MapLink:
+    """Single link in a mapping path.
+
+    :param concept: Concept mapped to.
+    :param via: Relationship type that led to the concept, if any.
+    """
+
     concept: Concept
     via: Relationship | None = None
 
     def __str__(self) -> str:
         s = f"{self.concept.concept_id} {self.concept.concept_name}"
         if self.via is not None:
-            s = f"[{self.via.value}] {s}"
+            s = f"({self.via.value}) {s}"
         return s
 
 
@@ -56,8 +62,8 @@ class NewMap:
         if not self.map_path:
             return {}
         # we only want to show the intermediate steps in the mapping
-        # path, so we ignore the source concept and the final target
-        map_path = [str(ml) for ml in self.map_path[1:-1]]
+        # path, so we ignore the source concept
+        map_path = [str(ml) for ml in self.map_path[1:]]
         map_properties = {
             "map_path": map_path,
             "maps_to": [f"{c.concept_id} {c.concept_name}" for c in self.concepts],
@@ -70,6 +76,3 @@ class NewMap:
         return {
             f"{original_concept.concept_id} {original_concept.concept_name}": map_properties,
         }
-
-    def render_map_path(self) -> str:
-        return " ".join([str(ml) for ml in self.map_path])

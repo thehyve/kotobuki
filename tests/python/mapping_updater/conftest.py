@@ -4,6 +4,7 @@ from contextlib import contextmanager
 from pathlib import Path
 
 import pytest
+import yaml
 from omop_cdm.constants import VOCAB_SCHEMA
 from sqlalchemy import Connection, Engine, create_engine, text
 from sqlalchemy.sql.ddl import CreateSchema, DropSchema
@@ -82,3 +83,9 @@ def write_tmp_usagi_file(tmp_path: Path, original_usagi_file: Path) -> Path:
     tmp_usagi_file = tmp_path / original_usagi_file.name
     shutil.copyfile(original_usagi_file, tmp_usagi_file)
     return tmp_usagi_file
+
+
+def read_yaml_file(path: Path) -> dict:
+    """Read the YAML file and return as dict."""
+    with path.open("rt") as f:
+        return yaml.safe_load(f.read())
