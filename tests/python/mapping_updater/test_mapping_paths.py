@@ -12,19 +12,44 @@ from tests.python.mapping_updater.conftest import (
     write_tmp_usagi_file,
 )
 
-TARGET_CONCEPT1 = Concept(concept_id=3, concept_name="The gold standard")
-TARGET_CONCEPT2 = Concept(concept_id=30, concept_name="The other gold standard")
-VALUE_CONCEPT1 = Concept(concept_id=40, concept_name="The gold value")
-SOURCE_CONCEPT1 = Concept(concept_id=2, concept_name="The gold non-standard")
-HOMONYM_CONCEPT1 = Concept(concept_id=99, concept_name="THE GOLD NON-STANDARD")
+TARGET_CONCEPT1 = Concept(
+    concept_id=3,
+    concept_name="The gold standard",
+    vocabulary_id="V1",
+    domain_id="D1",
+)
+TARGET_CONCEPT2 = Concept(
+    concept_id=30,
+    concept_name="The other gold standard",
+    vocabulary_id="V1",
+    domain_id="D1",
+)
+VALUE_CONCEPT1 = Concept(
+    concept_id=40,
+    concept_name="The gold value",
+    vocabulary_id="V1",
+    domain_id="Meas Value",
+)
+SOURCE_CONCEPT1 = Concept(
+    concept_id=2,
+    concept_name="The gold non-standard",
+    vocabulary_id="V1",
+    domain_id="D1",
+)
+HOMONYM_CONCEPT1 = Concept(
+    concept_id=99,
+    concept_name="THE GOLD NON-STANDARD",
+    vocabulary_id="V2",
+    domain_id="D1",
+)
 
 
 def test_simple_mapping_path():
     map_links = [MapLink(concept=SOURCE_CONCEPT1)]
     new_map = NewMap(concepts=[TARGET_CONCEPT1], map_path=map_links)
     assert new_map.to_map_path_data() == {
-        "2 The gold non-standard": {
-            "maps_to": ["3 The gold standard"],
+        "2 The gold non-standard (V1 - D1)": {
+            "maps_to": ["3 The gold standard (V1 - D1)"],
         }
     }
 
@@ -36,9 +61,9 @@ def test_via_homonym_mapping_path():
     ]
     new_map = NewMap(concepts=[TARGET_CONCEPT1], map_path=map_links)
     assert new_map.to_map_path_data() == {
-        "2 The gold non-standard": {
+        "2 The gold non-standard (V1 - D1)": {
             "map_path": ["(Homonym) 99 THE GOLD NON-STANDARD"],
-            "maps_to": ["3 The gold standard"],
+            "maps_to": ["3 The gold standard (V1 - D1)"],
         }
     }
 
@@ -47,8 +72,8 @@ def test_one_to_two_mapping_path():
     map_links = [MapLink(concept=SOURCE_CONCEPT1)]
     new_map = NewMap(concepts=[TARGET_CONCEPT1, TARGET_CONCEPT2], map_path=map_links)
     assert new_map.to_map_path_data() == {
-        "2 The gold non-standard": {
-            "maps_to": ["3 The gold standard", "30 The other gold standard"],
+        "2 The gold non-standard (V1 - D1)": {
+            "maps_to": ["3 The gold standard (V1 - D1)", "30 The other gold standard (V1 - D1)"],
         }
     }
 
@@ -61,9 +86,9 @@ def test_maps_to_value_mapping_path():
         map_path=map_links,
     )
     assert new_map.to_map_path_data() == {
-        "2 The gold non-standard": {
-            "maps_to": ["3 The gold standard"],
-            "maps_to_value": ["40 The gold value"],
+        "2 The gold non-standard (V1 - D1)": {
+            "maps_to": ["3 The gold standard (V1 - D1)"],
+            "maps_to_value": ["40 The gold value (V1 - Meas Value)"],
         }
     }
 
@@ -75,16 +100,19 @@ def test_write_map_paths_e2e(tmp_path: Path, pg_db_engine: Engine):
     map_paths_file = next(tmp_path.glob("*.yml"))
     contents = read_yaml_file(map_paths_file)
     expected_contents = {
-        "1 x deprecated1": {
+        "1 x deprecated1 (0 - 0)": {
             "map_path": ["(Concept replaced by) 2 x deprecated2"],
-            "maps_to": ["3 x standard"],
+            "maps_to": ["3 x standard (0 - 0)"],
         },
-        "2 x deprecated2": {"maps_to": ["3 x standard"]},
-        "7 History of halitosis": {"maps_to": ["8 History of"], "maps_to_value": ["9 Halitosis"]},
-        "10 one_to_two_map": {"maps_to": ["11 1/2", "12 2/2"]},
-        "13 dep_concept_two_values": {
-            "maps_to": ["14 superstandard"],
-            "maps_to_value": ["15 val1", "16 val2"],
+        "2 x deprecated2 (0 - 0)": {"maps_to": ["3 x standard (0 - 0)"]},
+        "7 History of halitosis (0 - 0)": {
+            "maps_to": ["8 History of (0 - 0)"],
+            "maps_to_value": ["9 Halitosis (0 - 0)"],
+        },
+        "10 one_to_two_map (0 - 0)": {"maps_to": ["11 1/2 (0 - 0)", "12 2/2 (0 - 0)"]},
+        "13 dep_concept_two_values (0 - 0)": {
+            "maps_to": ["14 superstandard (0 - 0)"],
+            "maps_to_value": ["15 val1 (0 - 0)", "16 val2 (0 - 0)"],
         },
     }
     assert expected_contents == contents

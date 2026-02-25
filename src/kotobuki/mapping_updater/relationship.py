@@ -63,16 +63,18 @@ class NewMap:
             return {}
         # we only want to show the intermediate steps in the mapping
         # path, so we ignore the source concept
-        map_path = [str(ml) for ml in self.map_path[1:]]
+        map_path = [str(map_link) for map_link in self.map_path[1:]]
         map_properties = {
             "map_path": map_path,
-            "maps_to": [f"{c.concept_id} {c.concept_name}" for c in self.concepts],
-            "maps_to_value": [f"{c.concept_id} {c.concept_name}" for c in self.value_as_concept],
+            "maps_to": [_concept_to_str(c) for c in self.concepts],
+            "maps_to_value": [_concept_to_str(c) for c in self.value_as_concept],
         }
         # Remove keys that point to empty lists
         map_properties = {k: v for k, v in map_properties.items() if v}
 
         source_concept = self.map_path[0].concept
-        return {
-            f"{source_concept.concept_id} {source_concept.concept_name}": map_properties,
-        }
+        return {_concept_to_str(source_concept): map_properties}
+
+
+def _concept_to_str(c: Concept) -> str:
+    return f"{c.concept_id} {c.concept_name} ({c.vocabulary_id} - {c.domain_id})"
