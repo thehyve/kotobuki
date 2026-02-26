@@ -45,10 +45,7 @@ def find_standard_concepts(
     # If there is one (or more) Maps to relationship, we are done
     if maps_to_mappings:
         target_concepts = [c.concept_2 for c in maps_to_mappings]
-        result = NewMap(concepts=target_concepts)
-        for target_concept in target_concepts:
-            path.append(MapLink(target_concept, via=Relationship.MAPS_TO))
-        result.map_path = path
+        result = NewMap(concepts=target_concepts, map_path=path)
         result.value_as_concept = find_maps_to_value_relationship(mappings)
         return result
 

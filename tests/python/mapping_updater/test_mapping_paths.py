@@ -1,0 +1,118 @@
+from pathlib import Path
+
+import pytest
+from omop_cdm.regular.cdm54 import Concept
+from sqlalchemy import Engine
+
+from kotobuki.mapping_updater.relationship import MapLink, NewMap, Relationship
+from kotobuki.mapping_updater.update_usagi import update_usagi_file
+from tests.python.mapping_updater.conftest import (
+    USAGI_STCM_FILE,
+    read_yaml_file,
+    write_tmp_usagi_file,
+)
+
+TARGET_CONCEPT1 = Concept(
+    concept_id=3,
+    concept_name="The gold standard",
+    vocabulary_id="V1",
+    domain_id="D1",
+)
+TARGET_CONCEPT2 = Concept(
+    concept_id=30,
+    concept_name="The other gold standard",
+    vocabulary_id="V1",
+    domain_id="D1",
+)
+VALUE_CONCEPT1 = Concept(
+    concept_id=40,
+    concept_name="The gold value",
+    vocabulary_id="V1",
+    domain_id="Meas Value",
+)
+SOURCE_CONCEPT1 = Concept(
+    concept_id=2,
+    concept_name="The gold non-standard",
+    vocabulary_id="V1",
+    domain_id="D1",
+)
+HOMONYM_CONCEPT1 = Concept(
+    concept_id=99,
+    concept_name="THE GOLD NON-STANDARD",
+    vocabulary_id="V2",
+    domain_id="D1",
+)
+
+
+def test_simple_mapping_path():
+    map_links = [MapLink(concept=SOURCE_CONCEPT1)]
+    new_map = NewMap(concepts=[TARGET_CONCEPT1], map_path=map_links)
+    assert new_map.to_map_path_data() == {
+        "2 The gold non-standard (V1 - D1)": {
+            "maps_to": ["3 The gold standard (V1 - D1)"],
+        }
+    }
+
+
+def test_via_homonym_mapping_path():
+    map_links = [
+        MapLink(concept=SOURCE_CONCEPT1),
+        MapLink(concept=HOMONYM_CONCEPT1, via=Relationship.HOMONYM),
+    ]
+    new_map = NewMap(concepts=[TARGET_CONCEPT1], map_path=map_links)
+    assert new_map.to_map_path_data() == {
+        "2 The gold non-standard (V1 - D1)": {
+            "map_path": ["(Homonym) 99 THE GOLD NON-STANDARD"],
+            "maps_to": ["3 The gold standard (V1 - D1)"],
+        }
+    }
+
+
+def test_one_to_two_mapping_path():
+    map_links = [MapLink(concept=SOURCE_CONCEPT1)]
+    new_map = NewMap(concepts=[TARGET_CONCEPT1, TARGET_CONCEPT2], map_path=map_links)
+    assert new_map.to_map_path_data() == {
+        "2 The gold non-standard (V1 - D1)": {
+            "maps_to": ["3 The gold standard (V1 - D1)", "30 The other gold standard (V1 - D1)"],
+        }
+    }
+
+
+def test_maps_to_value_mapping_path():
+    map_links = [MapLink(concept=SOURCE_CONCEPT1)]
+    new_map = NewMap(
+        concepts=[TARGET_CONCEPT1],
+        value_as_concept=[VALUE_CONCEPT1],
+        map_path=map_links,
+    )
+    assert new_map.to_map_path_data() == {
+        "2 The gold non-standard (V1 - D1)": {
+            "maps_to": ["3 The gold standard (V1 - D1)"],
+            "maps_to_value": ["40 The gold value (V1 - Meas Value)"],
+        }
+    }
+
+
+@pytest.mark.usefixtures("create_vocab_tables")
+def test_write_map_paths_e2e(tmp_path: Path, pg_db_engine: Engine):
+    tmp_usagi_file = write_tmp_usagi_file(tmp_path, USAGI_STCM_FILE)
+    update_usagi_file(pg_db_engine, "vocab", tmp_usagi_file, write_map_paths=True)
+    map_paths_file = next(tmp_path.glob("*.yml"))
+    contents = read_yaml_file(map_paths_file)
+    expected_contents = {
+        "1 x deprecated1 (0 - 0)": {
+            "map_path": ["(Concept replaced by) 2 x deprecated2"],
+            "maps_to": ["3 x standard (0 - 0)"],
+        },
+        "2 x deprecated2 (0 - 0)": {"maps_to": ["3 x standard (0 - 0)"]},
+        "7 History of halitosis (0 - 0)": {
+            "maps_to": ["8 History of (0 - 0)"],
+            "maps_to_value": ["9 Halitosis (0 - 0)"],
+        },
+        "10 one_to_two_map (0 - 0)": {"maps_to": ["11 1/2 (0 - 0)", "12 2/2 (0 - 0)"]},
+        "13 dep_concept_two_values (0 - 0)": {
+            "maps_to": ["14 superstandard (0 - 0)"],
+            "maps_to_value": ["15 val1 (0 - 0)", "16 val2 (0 - 0)"],
+        },
+    }
+    assert expected_contents == contents

@@ -6,6 +6,7 @@ from time import strftime, time
 from typing import Any
 
 import pandas as pd
+import yaml
 from omop_cdm.regular.cdm54 import Concept
 
 from .relationship import NewMap
@@ -163,7 +164,14 @@ def write_usagi_file(
 
 def write_mapping_paths(usagi_file: Path, new_maps: list[NewMap]) -> None:
     out_dir = usagi_file.parent
-    out_file = out_dir / f"{usagi_file.stem}_map_path_{strftime('%Y-%m-%dT%H%M%S')}.txt"
-    with out_file.open("w", encoding="utf8") as out:
-        for nm in new_maps:
-            out.write(f"{nm.render_map_path()}\n")
+    out_file = out_dir / f"{usagi_file.stem}_map_path_{strftime('%Y-%m-%dT%H%M%S')}.yml"
+    map_paths_as_dict = {}
+    for nm in new_maps:
+        map_paths_as_dict.update(nm.to_map_path_data())
+    write_yaml_file(map_paths_as_dict, out_file)
+
+
+def write_yaml_file(contents: dict | list, out_path: Path) -> None:
+    """Write dict to a YAML file."""
+    with out_path.open("w", encoding="utf8") as out:
+        yaml.dump(contents, out)

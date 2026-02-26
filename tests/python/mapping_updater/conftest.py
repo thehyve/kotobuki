@@ -1,7 +1,10 @@
+import shutil
+from collections.abc import Iterator
 from contextlib import contextmanager
 from pathlib import Path
 
 import pytest
+import yaml
 from omop_cdm.constants import VOCAB_SCHEMA
 from sqlalchemy import Connection, Engine, create_engine, text
 from sqlalchemy.sql.ddl import CreateSchema, DropSchema
@@ -14,9 +17,13 @@ DB_SETUP_DIR = Path(__file__).parent / "db_setup"
 VOCAB_DDL_FILE = DB_SETUP_DIR / "vocab_ddl.sql"
 VOCAB_DATA_DIR = DB_SETUP_DIR / "vocab_data"
 
+TEST_DATA_DIR = Path(__file__).parent / "test_data"
+MAP_TO_0_USAGI_FILE = TEST_DATA_DIR / "usagi_files" / "mapping_to_0.csv"
+USAGI_STCM_FILE = TEST_DATA_DIR / "stcm" / "usagi_test_stcm.csv"
+
 
 @pytest.fixture(scope="session")
-def pg_db_engine() -> Engine:
+def pg_db_engine() -> Iterator[Engine]:
     with PostgresContainer(POSTGRES_IMAGE) as postgres:
         engine = create_engine(postgres.get_connection_url())
         engine = engine.execution_options(schema_translate_map=SCHEMA_MAP)
@@ -70,3 +77,15 @@ def load_relationship_test_data(engine: Engine) -> None:
             connection.commit()
         finally:
             connection.close()
+
+
+def write_tmp_usagi_file(tmp_path: Path, original_usagi_file: Path) -> Path:
+    tmp_usagi_file = tmp_path / original_usagi_file.name
+    shutil.copyfile(original_usagi_file, tmp_usagi_file)
+    return tmp_usagi_file
+
+
+def read_yaml_file(path: Path) -> dict:
+    """Read the YAML file and return as dict."""
+    with path.open("rt") as f:
+        return yaml.safe_load(f.read())

@@ -29,13 +29,19 @@ VAL_TO_RELATIONSHIP = {e.value: e for e in Relationship}
 
 @dataclass
 class MapLink:
+    """Single link in a mapping path.
+
+    :param concept: Concept mapped to.
+    :param via: Relationship type that led to the concept, if any.
+    """
+
     concept: Concept
     via: Relationship | None = None
 
     def __str__(self) -> str:
-        s = f"[{self.concept.concept_id}] {self.concept.concept_name}"
+        s = f"{self.concept.concept_id} {self.concept.concept_name}"
         if self.via is not None:
-            s = f"➡️ <{self.via.value}> {s}"
+            s = f"({self.via.value}) {s}"
         return s
 
 
@@ -51,5 +57,24 @@ class NewMap:
             s = f"{s}\nMaps to value: {','.join(str(c.concept_id) for c in self.value_as_concept)}"
         return s
 
-    def render_map_path(self) -> str:
-        return " ".join([str(ml) for ml in self.map_path])
+    def to_map_path_data(self) -> dict[str, dict[str, list[str]]]:
+        """Convert to dict suitable for writing to mapping path file."""
+        if not self.map_path:
+            return {}
+        # we only want to show the intermediate steps in the mapping
+        # path, so we ignore the source concept
+        map_path = [str(map_link) for map_link in self.map_path[1:]]
+        map_properties = {
+            "map_path": map_path,
+            "maps_to": [_concept_to_str(c) for c in self.concepts],
+            "maps_to_value": [_concept_to_str(c) for c in self.value_as_concept],
+        }
+        # Remove keys that point to empty lists
+        map_properties = {k: v for k, v in map_properties.items() if v}
+
+        source_concept = self.map_path[0].concept
+        return {_concept_to_str(source_concept): map_properties}
+
+
+def _concept_to_str(c: Concept) -> str:
+    return f"{c.concept_id} {c.concept_name} ({c.vocabulary_id} - {c.domain_id})"
