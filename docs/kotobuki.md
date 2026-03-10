@@ -85,7 +85,8 @@ the concept relationships of the original concept do not link to a standard conc
 
 All available homonyms will be parsed for concept relationships (just like the original
 non-standard concept) until a standard concept is found or all relationship paths have
-been traversed.
+been traversed. When multiple homonyms map to a standard concept, one that maps to a
+concept from the same domain as the original mapping will be chosen if available.
 
 For some homonym concepts, the case may be different (e.g. diabetes type 2 vs Diabetes
 Type 2). It needs to be specified within the use of kotobuki whether such homonyms

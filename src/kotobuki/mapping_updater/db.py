@@ -90,14 +90,28 @@ def find_all_homonyms(
 def find_suitable_homonym(
     homonyms: Sequence[Concept], session: Session, concept: Concept
 ) -> NewMap | None:
-    """Return first homonym concept that maps to a standard concept."""
+    """
+    Return a new mapping for a homonym that maps to a standard concept.
+
+    If multiple homonyms map to a standard concept, those that are from
+    the same domain as the original concept are prioritized. If there
+    are no homonyms, or none map to a standard concept, return None.
+    """
     start_path = [MapLink(concept)]
+    mappings: list[NewMap] = []
     for h in homonyms:
         path = start_path.copy()
         path.append(MapLink(h, Relationship.HOMONYM))
         new_map = find_standard_concepts(h.concept_id, session, path)
         if new_map is not None:
-            return new_map
+            mappings.append(new_map)
+    same_domain_mappings = [
+        nm for nm in mappings if any(c.domain_id == concept.domain_id for c in nm.concepts)
+    ]
+    if same_domain_mappings:
+        return same_domain_mappings[0]
+    if mappings:
+        return mappings[0]
     return None
 
 
