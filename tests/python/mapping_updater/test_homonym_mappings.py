@@ -6,6 +6,15 @@ from tests.python.mapping_updater.test_usagi_mappings import get_new_map
 pytestmark = pytest.mark.usefixtures("create_vocab_tables")
 
 
+def test_homonym_mapping_active(pg_db_engine: Engine):
+    """Concept 5 can only map to 6 via a homonym."""
+    result = get_new_map(concept_id=5, engine=pg_db_engine, homonyms=True)
+    # With activated homonym search, it should map to 6
+    assert len(result.concepts) == 1
+    assert result.concepts[0].concept_id == 6
+    assert not result.value_as_concept
+
+
 def test_find_standard_concept_via_case_insensitive_homonym(pg_db_engine: Engine):
     """
     The concept QzErTy is non-standard without a relationship to a standard concept,

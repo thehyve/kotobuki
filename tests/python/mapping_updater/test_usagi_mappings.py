@@ -58,15 +58,6 @@ def test_homonym_mapping_inactive(pg_db_engine: Engine):
     assert result is None
 
 
-def test_homonym_mapping_active(pg_db_engine: Engine):
-    """Concept 5 can only map to 6 via a homonym."""
-    result = get_new_map(concept_id=5, engine=pg_db_engine, homonyms=True)
-    # With activated homonym search, it should map to 6
-    assert len(result.concepts) == 1
-    assert result.concepts[0].concept_id == 6
-    assert not result.value_as_concept
-
-
 def test_maps_to_value(pg_db_engine: Engine):
     """Concept 7 has both maps to and maps to value relationships."""
     result = get_new_map(concept_id=7, engine=pg_db_engine)
