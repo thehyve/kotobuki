@@ -15,6 +15,14 @@ def test_homonym_mapping_active(pg_db_engine: Engine):
     assert not result.value_as_concept
 
 
+def test_homonym_with_same_domain_gets_priority(pg_db_engine: Engine):
+    """Of multiple standard homonyms, only concept 24 is from the same domain."""
+    result = get_new_map(concept_id=21, engine=pg_db_engine, homonyms=True, ignore_case=True)
+    assert len(result.concepts) == 1
+    assert result.concepts[0].concept_id == 24
+    assert not result.value_as_concept
+
+
 def test_find_standard_concept_via_case_insensitive_homonym(pg_db_engine: Engine):
     """
     The concept QzErTy is non-standard without a relationship to a standard concept,
