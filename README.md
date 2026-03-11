@@ -36,18 +36,12 @@ uv run --with jupyter,psycopg2,kotobuki jupyter lab
 ## Usage
 See [User documentation](https://github.com/thehyve/kotobuki/blob/main/docs/kotobuki.md)
 
-## Development
+## Contributing
 
-### Setup steps
+We welcome all contributions, including bug reports, fixes, documentation enhancements,
+new ideas, and general improvements.
 
-Make sure the following tooling is installed:
-- [uv](https://docs.astral.sh/uv/getting-started/installation/)
-
-Install the project and dev dependencies via `uv sync --all-groups`.
-
-Then set up the git hook scripts via `uv run pre-commit install`.
-
-### Nox sessions
-
-Run `nox -l` for a list of available nox sessions, or simply run `nox`
-to run the ruff linter and the pytest suite for all supported Python versions.
+- We use the GitHub [issue tracker](https://github.com/thehyve/kotobuki/issues)
+  for all bugs/issues/enhancements.
+- See the [contributing](https://github.com/thehyve/kotobuki/CONTRIBUTING.md) page
+  for instructions on kotobuki development.
