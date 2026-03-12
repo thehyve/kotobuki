@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.4.0
+- If homonym search finds multiple standard concepts, those from the same domain
+  as the original mapping are now prioritized.
+
 ## v0.3.0
 - New `ignore_case` option to ignore concept name casing when looking for
   mappings via homonyms.

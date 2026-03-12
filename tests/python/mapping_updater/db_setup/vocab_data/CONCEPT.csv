@@ -20,3 +20,8 @@ concept_id	concept_name	domain_id	vocabulary_id	concept_class_id	standard_concep
 18	azerty	Condition	0	0		azerty	2017-01-01	2099-12-31	
 19	QzErTy	Condition	0	0		QzErTy	2017-01-01	2099-12-31	
 20	qzerty	Condition	0	0	S	qzerty	2017-01-01	2099-12-31	
+21	wonderful world	Observation	0	0		wonderful world	2017-01-01	2099-12-31	
+22	Wonderful World	Metadata	0	0	S	Wonderful World	2017-01-01	2099-12-31	
+23	WONDERFUL world	Metadata	0	0	S	WONDERFUL world	2017-01-01	2099-12-31	
+24	wonderful WORLD	Observation	0	0	S	wonderful WORLD	2017-01-01	2099-12-31	
+25	WONDERFUL WORLD	Condition	0	0	S	WONDERFUL WORLD	2017-01-01	2099-12-31	
