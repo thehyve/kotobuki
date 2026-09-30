@@ -8,7 +8,7 @@ import yaml
 from omop_cdm.constants import VOCAB_SCHEMA
 from sqlalchemy import Connection, Engine, create_engine, text
 from sqlalchemy.sql.ddl import CreateSchema, DropSchema
-from testcontainers.postgres import PostgresContainer
+from testcontainers.community.postgres import PostgresContainer
 
 POSTGRES_IMAGE = "postgres:16-alpine"
 SCHEMA_MAP: dict[str, str] = {VOCAB_SCHEMA: "vocab"}
