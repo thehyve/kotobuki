@@ -43,5 +43,5 @@ new ideas, and general improvements.
 
 - We use the GitHub [issue tracker](https://github.com/thehyve/kotobuki/issues)
   for all bugs/issues/enhancements.
-- See the [contributing](https://github.com/thehyve/kotobuki/CONTRIBUTING.md) page
+- See the [contributing](https://github.com/thehyve/kotobuki/blob/main/CONTRIBUTING.md) page
   for instructions on kotobuki development.
