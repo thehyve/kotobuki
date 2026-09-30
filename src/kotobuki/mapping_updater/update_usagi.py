@@ -77,26 +77,29 @@ def update_usagi_file(
         concepts = query_concepts(concept_ids, session)
         log_missing_in_db(found_concepts=concepts, all_concept_ids=concept_ids)
 
-        non_standard = {c for c in concepts if c.standard_concept != "S"}
-        if not non_standard:
+        non_standard_concepts = {c for c in concepts if c.standard_concept != "S"}
+        if not non_standard_concepts:
             logger.info("All target concepts are already standard 😍")
             if not update_all:
                 return
         else:
-            logger.info(f"{len(non_standard)} target concepts are non-standard")
+            logger.info(f"{len(non_standard_concepts)} target concepts are non-standard")
 
-        new_mappings: dict[int, NewMap | None] = {c.concept_id: None for c in non_standard}
+        new_mappings: dict[int, NewMap | None] = {
+            c.concept_id: None for c in non_standard_concepts
+        }
 
-        logger.info("Querying database for standard concepts...")
-        for concept in non_standard:
-            new_map = find_new_mapping(concept, allow_homonyms, ignore_case, session)
-            new_mappings[concept.concept_id] = new_map
-        log_remapped_concepts(new_mappings)
+        logger.info("Querying database for latest concepts...")
+        if non_standard_concepts:
+            for concept in non_standard_concepts:
+                new_map = find_new_mapping(concept, allow_homonyms, ignore_case, session)
+                new_mappings[concept.concept_id] = new_map
+            log_remapped_concepts(new_mappings)
 
-        if write_map_paths:
-            logger.info("Writing mapping paths file")
-            new_maps = [nm for nm in new_mappings.values() if nm is not None]
-            write_mapping_paths(usagi_file, new_maps)
+            if write_map_paths:
+                logger.info("Writing mapping paths file")
+                new_maps = [nm for nm in new_mappings.values() if nm is not None]
+                write_mapping_paths(usagi_file, new_maps)
 
         if inspect_only:
             return
