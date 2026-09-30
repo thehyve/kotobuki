@@ -46,6 +46,7 @@ def update_usagi_file(
         concept relationships, try to find it through concepts with the
         same concept name. It is strongly recommended to index the
         concept_name column when using this.
+    :param ignore_case: Ignore casing when searching for homonyms.
     :param write_map_paths: Write an additional file that shows for each
         remapped concept, through which mapping relationships the new
         target concept was determined.
