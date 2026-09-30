@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.4.1
+- Improved logging when no standard concepts are found.
+
+Internal changes:
+- Updated dev dependencies.
+- Minor refactorings.
+
 ## v0.4.0
 - If homonym search finds multiple standard concepts, those from the same domain
   as the original mapping are now prioritized.
